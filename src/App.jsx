@@ -1,37 +1,35 @@
 import { useState } from 'react'
-
+import { Routes, Route } from 'react-router-dom'
 import './App.css'
 
-import LandingPage from './components/Landing/LandingPage'
-import { Routes ,Route} from 'react-router-dom'
-import Login from './components/Auth/Login'
-import VerifyOtp from './components/Auth/VerifyOtp'
-import FeedPage from './components/Feed/Feed'
-import Dashboard from './components/Feed/Dashboard'
+import NetworkApp from './components/layout/FeedLayout'
+import LandingPage from './components/layout/LandingLayout'
+import Login from './components/pages/Auth/Login'
+import VerifyOtp from './components/pages/Auth/VerifyOtp'
+import ExplorePage from './components/layout/Explorelayout'
+import Explore from './components/explore/Explore'
+import JoinCommunitySection from './components/communities/JoinCommunitySection'
+import { dummyCommunities } from './data/dummydata'
+import PostsRoute from './components/pages/post/PostsRoute'
+import CreatePost from './components/pages/post/CreatePost'
 
 function App() {
   const [count, setCount] = useState(0)
 
-
   return (
-    <>
     <Routes>
-      <Route path="/" element={<LandingPage />} />
-      <Route path="/login" element={<Login />} />
-            <Route path="/login" element={<Login />} />
-      <Route path="/verify-otp" element={<VerifyOtp />} />
-      <Route path="/feed" element={<Dashboard/>} />
-      {/* <Route path="/explore" element={<LandingPage />} />
-      <Route path="/top-ideas" element={<LandingPage />} />
-      <Route path="/community" element={<LandingPage />} /> */}
-      {/* Add other routes here as needed */}
-      {/* <Route path="/login" element={<Login />} /> */}
-      {/* <Route path="/explore" element={<Explore />} /> */}
-      {/* <Route path="/top-ideas" element={<TopIdeas />} /> */}
-      {/* <Route path="/community" element={<Community />} /> */}
+      <Route path="/" element={<LandingPage/>} />
+      <Route path="/home" element={ <NetworkApp/>} />
+      <Route path="/login" element={<Login/>} />
+      <Route path="/verify-otp" element={<VerifyOtp/>} />
+      <Route path="/explore" element={<ExplorePage/>} />
+
+      <Route path='/join-community' element={<JoinCommunitySection  />} />
+              <Route path="/post" element={<CreatePost/>} />
+
+      {/* Add other routes as needed */}
     </Routes>
-    </>
   )
-}
+} 
 
 export default App
