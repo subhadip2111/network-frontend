@@ -4,19 +4,16 @@ import { Link } from "react-router-dom"
 export default function LandingPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 text-white overflow-hidden relative">
-      {/* Animated Background Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-20 left-10 w-72 h-72 bg-indigo-500/10 rounded-full blur-3xl animate-pulse"></div>
         <div className="absolute top-40 right-20 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
         <div className="absolute bottom-20 left-1/3 w-80 h-80 bg-blue-500/10 rounded-full blur-3xl animate-pulse delay-2000"></div>
 
-        {/* Floating geometric shapes */}
         <div className="absolute top-1/4 left-1/4 w-4 h-4 bg-indigo-400/30 rotate-45 animate-float"></div>
         <div className="absolute top-1/3 right-1/3 w-6 h-6 bg-purple-400/30 rotate-12 animate-float-delayed"></div>
         <div className="absolute bottom-1/3 left-1/2 w-3 h-3 bg-blue-400/30 rotate-45 animate-float-slow"></div>
       </div>
 
-      {/* Navigation Bar */}
       <nav className="relative z-10 border-b border-gray-800/50 backdrop-blur-sm bg-black/20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 

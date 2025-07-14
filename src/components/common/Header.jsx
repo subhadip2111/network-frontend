@@ -5,7 +5,7 @@ const Header = ({ user, onProfileClick, onNotificationClick }) => {
   return (
     <header className="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
       <div className="flex items-center space-x-6">
-        <Link to={'/dashboard'} className="text-2xl font-bold text-indigo-600">Network</Link>
+        <Link to={'/home'} className="text-2xl font-bold text-indigo-600">Network</Link>
         <div className="relative pl-96 ">
           <Search className="absolute left-auto top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
           <input 

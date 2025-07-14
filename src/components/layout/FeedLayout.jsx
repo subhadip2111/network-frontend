@@ -8,6 +8,7 @@ import JoinCommunitySection from "../communities/JoinCommunitySection";
 import PostsRoute from "../pages/post/PostsRoute";
 import CreatePost from "../pages/post/CreatePost";
 import MyCommunities from "../communities/MyCommunities";
+import Profile from "../pages/profile/Profile";
 const NetworkApp = () => {
   const [activeSection, setActiveSection] = useState('dashboard');
   const [posts, setPosts] = useState(dummyPosts);
@@ -67,14 +68,7 @@ const NetworkApp = () => {
   };
 
   const renderContent = () => {
-    // if (showCreatePost) {
-    //   return (
-    //     // <CreatePostForm
-    //     //   onSubmit={handleCreatePost}
-    //     //   onCancel={() => setShowCreatePost(false)}
-    //     // />
-    //   );
-    // }
+
 
     switch (activeSection) {
       case 'dashboard':
@@ -106,6 +100,11 @@ const NetworkApp = () => {
         return (
           <MyCommunities />
         )
+      case 'profile':
+        return (
+            <Profile/>
+          
+        );
 
       default:
         return (
@@ -138,7 +137,6 @@ const NetworkApp = () => {
         <Sidebar
           activeSection={activeSection}
           onSectionChange={setActiveSection}
-          user={dummyUser}
         />
 
         <main className="flex-1 p-8">

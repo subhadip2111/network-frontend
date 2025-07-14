@@ -12,6 +12,7 @@ import JoinCommunitySection from './components/communities/JoinCommunitySection'
 import { dummyCommunities } from './data/dummydata'
 import PostsRoute from './components/pages/post/PostsRoute'
 import CreatePost from './components/pages/post/CreatePost'
+import Profile from './components/pages/profile/Profile'
 
 function App() {
   const [count, setCount] = useState(0)
@@ -23,6 +24,7 @@ function App() {
       <Route path="/login" element={<Login/>} />
       <Route path="/verify-otp" element={<VerifyOtp/>} />
       <Route path="/explore" element={<ExplorePage/>} />
+      <Route path="/profile" element={<Profile/>} />
 
       <Route path='/join-community' element={<JoinCommunitySection  />} />
               <Route path="/post" element={<CreatePost/>} />

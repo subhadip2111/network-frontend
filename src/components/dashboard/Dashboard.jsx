@@ -2,6 +2,10 @@ import { TrendingUp } from "lucide-react";
 import PostCard from "../posts/PostCard";
 
 const Dashboard = ({ user, posts, onLike, onComment, onJoin }) => {
+
+
+
+
   const stats = [
     { label: 'Active Projects', value: '12', change: '+2 this week', color: 'text-green-600' },
     { label: 'Collaborations', value: '8', change: '+1 this month', color: 'text-blue-600' },
@@ -19,7 +23,6 @@ const Dashboard = ({ user, posts, onLike, onComment, onJoin }) => {
    
 
       <div>
-        {/* <h2 className="text-2xl font-bold text-gray-900 mb-6">Recent Activity</h2> */}
         <div className="space-y-6">
           {posts.slice(0, 3).map(post => (
             <PostCard
