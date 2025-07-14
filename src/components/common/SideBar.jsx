@@ -1,23 +1,18 @@
-import { Home, LogOut, Settings, Compass, Users, MessageCircle, Plus ,User} from "lucide-react";
-import { useSelector } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
-// import Profile from "../pages/profile/Profile";
-import { useState } from "react";
+import { Link, useLocation } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { Home, Compass, Users, Plus, MessageCircle, User, Settings, LogOut } from 'lucide-react';
 
-const Sidebar = ({ activeSection, onSectionChange }) => {
-  const navigate = useNavigate();
-  const [open, setOpen] = useState(false);
-
-  const user = useSelector((state) => state.auth.user)
-console.log('us')
+const Sidebar = ({ activeSection }) => {
+  const location = useLocation();
+  const user = useSelector((state) => state.auth.user);
+  
   const menuItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: Home },
-    { id: 'explore', label: 'Explore', icon: Compass },
-    { id: 'join-community', label: 'Join Community', icon: Users },
-    { id: 'post', label: 'Create Post', icon: Plus },
-    { id: 'my-communities', label: 'My Communities', icon: MessageCircle },
-    { id: 'profile', label: 'Profile', icon: User },
-
+    { id: 'dashboard', label: 'Dashboard', icon: Home, path: '/home' },
+    { id: 'explore', label: 'Explore', icon: Compass, path: '/home/explore' },
+    { id: 'join-community', label: 'Join Community', icon: Users, path: '/home/join-community' },
+    { id: 'post', label: 'Create Post', icon: Plus, path: '/home/post' },
+    { id: 'my-communities', label: 'My Communities', icon: MessageCircle, path: '/home/my-communities' },
+    { id: 'profile', label: 'Profile', icon: User, path: '/home/profile' },
   ];
 
   return (
@@ -27,26 +22,24 @@ console.log('us')
           <img
             src={user?.profilePicture ? user.profilePicture : 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face'}
             alt={user?.fullName || 'User'}
-            className="w-12 h-12 rounded-full"
-
-          />
-
+            className="w-12 h-12 rounded-full" 
+          /> 
           <div>
             <h3 className="font-semibold text-gray-900">{user?.fullName}</h3>
-            <p className="text-sm text-gray-500">{user?.fullName||'user'}</p>
+            <p className="text-sm text-gray-500">{user?.fullName || 'user'}</p>
           </div>
         </div>
         <div className="mt-4 grid grid-cols-3 gap-4 text-center">
           <div>
-            {/* <p className="font-semibold text-gray-900">{user?.followers||200}</p> */}
+            <p className="font-semibold text-gray-900">{user?.followers || 200}</p>
             <p className="text-xs text-gray-500">Followers</p>
           </div>
           <div>
-            {/* <p className="font-semibold text-gray-900">{user.following}</p> */}
+            <p className="font-semibold text-gray-900">{user?.following || 150}</p>
             <p className="text-xs text-gray-500">Following</p>
           </div>
           <div>
-            {/* <p className="font-semibold text-gray-900">{user.communities}</p> */}
+            <p className="font-semibold text-gray-900">{user?.communities || 5}</p>
             <p className="text-xs text-gray-500">Communities</p>
           </div>
         </div>
@@ -58,17 +51,17 @@ console.log('us')
             const Icon = item.icon;
             return (
               <li key={item.id}>
-                <button
-                  type="button"
-                  onClick={() => onSectionChange(item.id)}
-                  className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-left transition-colors ${activeSection === item.id
-                    ? 'bg-indigo-50 text-indigo-600 border border-indigo-200'
-                    : 'text-gray-700 hover:bg-gray-50'
-                    }`}
+                <Link
+                  to={item.path}
+                  className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-left transition-colors ${
+                    activeSection === item.id
+                      ? 'bg-indigo-50 text-indigo-600 border border-indigo-200'
+                      : 'text-gray-700 hover:bg-gray-50'
+                  }`}
                 >
                   <Icon className="w-5 h-5" />
                   <span className="font-medium">{item.label}</span>
-                </button>
+                </Link>
               </li>
             );
           })}
@@ -83,7 +76,7 @@ console.log('us')
         <Link to={'/'} className="w-full flex items-center space-x-3 px-4 py-3 text-red-600 hover:bg-red-50 rounded-lg transition-colors">
           <LogOut className="w-5 h-5" />
           <span>Logout</span>
-        </Link >
+        </Link>
       </div>
     </aside>
   );

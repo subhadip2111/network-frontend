@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, Navigate } from 'react-router-dom'
 import './App.css'
 
 import NetworkApp from './components/layout/FeedLayout'
@@ -20,18 +20,18 @@ function App() {
   return (
     <Routes>
       <Route path="/" element={<LandingPage/>} />
-      <Route path="/home" element={ <NetworkApp/>} />
+      <Route path="/home/*" element={<NetworkApp/>} />
       <Route path="/login" element={<Login/>} />
       <Route path="/verify-otp" element={<VerifyOtp/>} />
       <Route path="/explore" element={<ExplorePage/>} />
       <Route path="/profile" element={<Profile/>} />
-
-      <Route path='/join-community' element={<JoinCommunitySection  />} />
-              <Route path="/post" element={<CreatePost/>} />
-
-      {/* Add other routes as needed */}
+      <Route path='/join-community' element={<JoinCommunitySection/>} />
+      <Route path="/post" element={<CreatePost/>} />
+      
+      {/* Catch-all route - redirects unknown paths to home or landing */}
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   )
-} 
+}
 
 export default App

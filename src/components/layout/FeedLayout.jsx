@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { Routes, Route, useLocation } from "react-router-dom";
 import { dummyCommunities, dummyPosts, dummyUser } from "../../data/dummydata";
 import Header from "../common/Header";
 import Sidebar from "../common/SideBar";
@@ -9,11 +10,24 @@ import PostsRoute from "../pages/post/PostsRoute";
 import CreatePost from "../pages/post/CreatePost";
 import MyCommunities from "../communities/MyCommunities";
 import Profile from "../pages/profile/Profile";
+
 const NetworkApp = () => {
-  const [activeSection, setActiveSection] = useState('dashboard');
   const [posts, setPosts] = useState(dummyPosts);
   const [communities, setCommunities] = useState(dummyCommunities);
   const [showCreatePost, setShowCreatePost] = useState(false);
+  const location = useLocation();
+
+  // Get active section from current route
+  const getActiveSection = () => {
+    const path = location.pathname;
+    if (path === '/home' || path === '/home/') return 'dashboard';
+    if (path.includes('/explore')) return 'explore';
+    if (path.includes('/join-community')) return 'join-community';
+    if (path.includes('/post')) return 'post';
+    if (path.includes('/my-communities')) return 'my-communities';
+    if (path.includes('/profile')) return 'profile';
+    return 'dashboard';
+  };
 
   const handleLike = (postId) => {
     setPosts(posts.map(post =>
@@ -64,66 +78,7 @@ const NetworkApp = () => {
     };
     setPosts([newPost, ...posts]);
     setShowCreatePost(false);
-    setActiveSection('dashboard');
   };
-
-  const renderContent = () => {
-
-
-    switch (activeSection) {
-      case 'dashboard':
-        return (
-          <Dashboard
-            user={dummyUser}
-            posts={posts}
-            onLike={handleLike}
-            onComment={handleComment}
-            onJoin={handleJoin}
-          />
-        );
-
-      case 'explore':
-        return <ExplorePage />;
-
-      case 'join-community':
-        return (
-          <JoinCommunitySection allCommunities={dummyCommunities} />
-        );
-
-      case 'post':
-        return (
-          <CreatePost />
-
-
-        )
-      case 'my-communities':
-        return (
-          <MyCommunities />
-        )
-      case 'profile':
-        return (
-            <Profile/>
-          
-        );
-
-      default:
-        return (
-          <Dashboard
-            user={dummyUser}
-            posts={posts}
-            onLike={handleLike}
-            onComment={handleComment}
-            onJoin={handleJoin}
-          />
-        );
-    }
-  };
-
-  useEffect(() => {
-    if (activeSection === 'post') {
-      setShowCreatePost(true);
-    }
-  }, [activeSection]);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -135,12 +90,48 @@ const NetworkApp = () => {
 
       <div className="flex">
         <Sidebar
-          activeSection={activeSection}
-          onSectionChange={setActiveSection}
+          activeSection={getActiveSection()}
+          onSectionChange={(section) => {
+            // This should now use navigation instead of state
+            console.log('Section changed to:', section);
+          }}
         />
 
         <main className="flex-1 p-8">
-          {renderContent()}
+          <Routes>
+            <Route 
+              path="/" 
+              element={
+                <Dashboard
+                  user={dummyUser}
+                  posts={posts}
+                  onLike={handleLike}
+                  onComment={handleComment}
+                  onJoin={handleJoin}
+                />
+              } 
+            />
+            <Route 
+              path="/explore" 
+              element={<ExplorePage />} 
+            />
+            <Route 
+              path="/join-community" 
+              element={<JoinCommunitySection allCommunities={dummyCommunities} />} 
+            />
+            <Route 
+              path="/post" 
+              element={<CreatePost onCreatePost={handleCreatePost} />} 
+            />
+            <Route 
+              path="/my-communities" 
+              element={<MyCommunities />} 
+            />
+            <Route 
+              path="/profile" 
+              element={<Profile />} 
+            />
+          </Routes>
         </main>
       </div>
     </div>
