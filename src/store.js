@@ -11,17 +11,17 @@ import {
   PURGE,
   REGISTER,
 } from 'redux-persist';
-import profileSlice from './features/auth/userSlice'; // Assuming this path is correct
+import profileSlice from './features/auth/profileSlice'; 
 
 const persistConfig = {
   key: 'root',
   storage,
-  whitelist: ['auth', 'profile'], // Added 'profile' to the whitelist for persistence
+  whitelist: ['auth', ], 
 };
 
 const rootReducer = combineReducers({
   auth: authSlice,
-  profile: profileSlice // Included the new profile slice
+  profile: profileSlice 
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

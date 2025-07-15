@@ -15,7 +15,6 @@ const profileSlice = createSlice({
      updateUserProfile: (state, action) => {
       // Merge the updated data into the existing user profile
       // This allows for partial updates from the backend response
-      console.log('action payload call',action.payload)
       console.log('action.payload data call',action.payload.data)
       state.user = { ...state.user, ...action.payload.data };
       state.isLoading = false;

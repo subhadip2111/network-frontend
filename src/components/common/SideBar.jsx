@@ -1,11 +1,13 @@
 import { Link, useLocation } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Home, Compass, Users, Plus, MessageCircle, User, Settings, LogOut } from 'lucide-react';
+import { logout } from '../../features/auth/authSlice';
+import { persistor } from '../../store';
 
 const Sidebar = ({ activeSection }) => {
   const location = useLocation();
   const user = useSelector((state) => state.auth.user);
-  
+const dispatch=useDispatch()
   const menuItems = [
     { id: 'dashboard', label: 'Dashboard', icon: Home, path: '/home' },
     { id: 'explore', label: 'Explore', icon: Compass, path: '/home/explore' },
@@ -75,7 +77,11 @@ const Sidebar = ({ activeSection }) => {
         </button>
         <Link to={'/'} className="w-full flex items-center space-x-3 px-4 py-3 text-red-600 hover:bg-red-50 rounded-lg transition-colors">
           <LogOut className="w-5 h-5" />
-          <span>Logout</span>
+          <button onClick={async ()=>{
+            dispatch(logout())
+              await persistor.purge(); 
+
+          }}>Logout</button>
         </Link>
       </div>
     </aside>

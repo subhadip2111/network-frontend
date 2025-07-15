@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
 import { addTokens, setVerifyUserInfo } from '../../../features/auth/authSlice';
-import { addDetails } from '../../../features/auth/userSlice';
+import { addDetails } from '../../../features/auth/profileSlice';
 
 const VerifyOtp = () => {
   const navigate = useNavigate();

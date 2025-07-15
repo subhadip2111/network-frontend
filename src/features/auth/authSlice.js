@@ -48,14 +48,20 @@ const authSlice = createSlice({
 
     updateUser: (state, action) => {
       const updatedData = action.payload.data;
-      console.log('updated user after image upoads', updatedData)
+      console.log('updated user after  profile was updted ', updatedData)
 
-      state.user = updateUser;
+      state.user = { ...state.user, ...action.payload.data };
 
+    },
+    logout:(state,action)=>{
+state.user=null;
+state.accessToken=null;
+state.refreshToken=null
     }
-  },
+
+  },  
 
 });
 
-export const { setVerifyUserInfo, clearAuth, setOtpSent, setLoading, setError, reqLoginUser, addTokens, updateUser } = authSlice.actions;
+export const { setVerifyUserInfo, clearAuth, setOtpSent, setLoading, setError, reqLoginUser, addTokens, updateUser,logout } = authSlice.actions;
 export default authSlice.reducer;

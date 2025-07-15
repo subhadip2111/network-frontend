@@ -1,32 +1,36 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { User, Mail, Calendar, Star, Edit3, Save, X, Upload, Camera, Github } from 'lucide-react';
+import { User, Mail, Calendar, Star, Edit3, Save, X, Upload, Camera, Github, Axe } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
-import { updateUserProfile } from '../../../features/auth/userSlice';
+import { updateUserProfile } from '../../../features/auth/profileSlice';
+import axios from 'axios';
+import Loader from '../../common/Loader';
+import { data } from 'react-router-dom';
+import { updateUser } from '../../../features/auth/authSlice';
 
 const Profile = () => {
   const dispatch = useDispatch();
-
+  const currentUser = useSelector((state) => state.auth.user);
+  const accessToken = useSelector((state) => state.auth.accessToken)
   // Dummy user data - replace with actual Redux state later
-  const dummyUserData = {
-    id: 'user-123',
-    email: 'john.doe@example.com',
-    age: 28,
-    referalPoint: 150,
-    password: 'password123',
-    fullName: 'John Doe',
-    profilePicture: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face',
-    role: 'DEVELOPER',
-    skills: ['JavaScript', 'React', 'Node.js', 'Python', 'Docker'],
-    bio: 'Passionate full-stack developer with 5+ years of experience building scalable web applications. I love working with modern technologies and solving complex problems.',
-    githubProfile: 'https://github.com/johndoe',
-    createdAt: '2023-01-15T10:30:00Z'
-  };
+  // const dummyUserData = {
+  //   id: 'user-123',
+  //   email: 'john.doe@example.com',
+  //   age: 28,
+  //   referalPoint: 150,
+  //   password: 'password123',
+  //   fullName: 'John Doe',
+  //   profilePicture: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face',
+  //   role: 'DEVELOPER',
+  //   skills: ['JavaScript', 'React', 'Node.js', 'Python', 'Docker'],
+  //   bio: 'Passionate full-stack developer with 5+ years of experience building scalable web applications. I love working with modern technologies and solving complex problems.',
+  //   githubProfile: 'https://github.com/johndoe',
+  //   createdAt: '2023-01-15T10:30:00Z'
+  // };
 
-  // Local state for component management
-  const [profileData, setProfileData] = useState(dummyUserData);
+  const [profileData, setProfileData] = useState(null);
 
   const [isEditing, setIsEditing] = useState(false);
-  const [editData, setEditData] = useState(dummyUserData);
+  const [editData, setEditData] = useState(profileData);
   const [newSkill, setNewSkill] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [previewImage, setPreviewImage] = useState(null);
@@ -42,21 +46,20 @@ const Profile = () => {
     });
   };
 
-  // Simulate fetching user profile
   const fetchUserProfile = async () => {
     try {
-      console.log('Fetching user profile...');
-      
-      // Simulate API call
-      const response = await simulateApiCall(dummyUserData);
-      const userData = response.data;
-      
-      console.log('Fetched user profile:', userData);
-
-      // Update Redux state
-      dispatch(updateUserProfile({ data: userData }));
-
-      // Update local state
+      const response = await axios.get(`${import.meta.env.VITE_BACKEND_BASE_URL}/user/${currentUser.id}`,
+        {
+          headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            'x-api-key': import.meta.env.VITE_SWAGGER_API_KEY,
+            'Content-Type': 'application/json',
+          }
+        }
+      )
+      const userData = response.data.data;
+      console.log(`updated response`, userData)
+      dispatch(updateUser({ data: userData }))
       setProfileData(userData);
       setEditData(userData);
 
@@ -65,7 +68,6 @@ const Profile = () => {
     }
   };
 
-  // Effect to fetch user profile on component mount
   useEffect(() => {
     fetchUserProfile();
   }, []);
@@ -78,25 +80,31 @@ const Profile = () => {
   };
 
   const handleImageUpload = async (event) => {
-    const file = event.target.files[0];
-    if (!file) return;
+    const selectedFile = event.target.files[0];
+
+    const formData = new FormData();
+    formData.append('file', selectedFile);
+    if (!selectedFile) return;
 
     setUploadingImage(true);
 
     try {
-      // Simulate image upload
-      console.log('Uploading image:', file.name);
-      
-      // Create a preview URL for the uploaded image
-      const previewUrl = URL.createObjectURL(file);
-      setPreviewImage(previewUrl);
+      console.log('Uploading image:', selectedFile.name);
 
-      // Simulate API response with uploaded image URL
-      await simulateApiCall({ url: previewUrl }, 1500);
-
+      const previewUrl = await axios.post(`${import.meta.env.VITE_BACKEND_BASE_URL}/user/image/upload`,
+        formData,
+        {
+          headers: {
+            'x-api-key': import.meta.env.VITE_SWAGGER_API_KEY,
+            'Content-Type': 'multipart/form-data',
+          }
+        }
+      )
+      console.log(previewUrl.data.url)
+      setPreviewImage(previewUrl.data.url);
       setEditData((prev) => ({
         ...prev,
-        profilePicture: previewUrl,
+        profilePicture: previewUrl.data.url,
       }));
 
       console.log('Image uploaded successfully');
@@ -118,57 +126,72 @@ const Profile = () => {
     handleInputChange('skills', editData.skills.filter(skill => skill !== skillToRemove));
   };
 
-  const handleSave = async () => {
-    if (!profileData.id) {
-      console.error('User ID not available for update');
-      return;
-    }
+const handleSave = async () => {
+  if (!profileData.id) {
+    console.error('User ID not available for update');
+    return;
+  }
 
-    setIsLoading(true);
-    const updatedPayload = {};
-    
-    // Compare editData with profileData to find changes
-    Object.keys(editData).forEach((key) => {
-      if (key !== 'id' && JSON.stringify(editData[key]) !== JSON.stringify(profileData[key])) {
-        updatedPayload[key] = editData[key];
+  setIsLoading(true);
+
+  const updatedPayload = {};
+
+  // Compare editable fields
+  Object.keys(editData).forEach((key) => {
+    if (
+      key !== 'id' &&
+      JSON.stringify(editData[key]) !== JSON.stringify(profileData[key])
+    ) {
+      updatedPayload[key] = editData[key];
+    }
+  });
+
+  // If previewImage was set from image upload, make sure it's included
+  if (previewImage && previewImage !== profileData.profilePicture) {
+    updatedPayload.profilePicture = previewImage;
+  }
+
+  // No change? Exit
+  if (Object.keys(updatedPayload).length === 0) {
+    setIsLoading(false);
+    setIsEditing(false);
+    setPreviewImage(null);
+    return;
+  }
+
+  try {
+    console.log('Updating profile with:', updatedPayload);
+
+    const response = await axios.patch(
+      `${import.meta.env.VITE_BACKEND_BASE_URL}/user/${currentUser.id}`,
+      updatedPayload,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          'x-api-key': import.meta.env.VITE_SWAGGER_API_KEY,
+          'Content-Type': 'application/json',
+        },
       }
-    });
+    );
 
-    if (Object.keys(updatedPayload).length === 0) {
-      setIsLoading(false);
-      setIsEditing(false);
-      setPreviewImage(null);
-      return;
-    }
+    console.log('Profile updated successfully:', response.data.data);
 
-    try {
-      console.log('Updating profile with:', updatedPayload);
-      
-      // Simulate API call
-      const response = await simulateApiCall({ ...profileData, ...updatedPayload }, 1500);
-      
-      console.log('Profile updated successfully:', response.data);
+dispatch(updateUser({ data: response.data.data }))
+    setProfileData((prev) => ({
+      ...prev,
+      ...updatedPayload,
+    }));
 
-      // Update Redux state with the response
-      dispatch(updateUserProfile({ data: response.data }));
+    setIsEditing(false);
+    setPreviewImage(null);
+    setNewSkill('');
+  } catch (error) {
+    console.error('Profile update failed:', error.response?.data || error.message);
+  } finally {
+    setIsLoading(false);
+  }
+};
 
-      // Update local state
-      setProfileData((prev) => ({
-        ...prev,
-        ...updatedPayload,
-      }));
-
-      setIsEditing(false);
-      setPreviewImage(null);
-
-      console.log('Profile update completed');
-
-    } catch (error) {
-      console.error('Profile update failed:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   const handleCancel = () => {
     setEditData({ ...profileData });
@@ -190,21 +213,9 @@ const Profile = () => {
     return value || placeholder;
   };
 
-  // Show loading state while fetching (removed for dummy data)
-  // if (isFetching) {
-  //   return (
-  //     <div className="min-h-screen bg-gray-50 py-8 px-4">
-  //       <div className="max-w-4xl mx-auto">
-  //         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-  //           <div className="flex items-center justify-center">
-  //             <div className="w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-  //             <span className="ml-2 text-gray-600">Loading profile...</span>
-  //           </div>
-  //         </div>
-  //       </div>
-  //     </div>
-  //   );
-  // }
+  if (!profileData) {
+    return <Loader />
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 py-8 px-4">
@@ -215,9 +226,9 @@ const Profile = () => {
               <div className="relative">
                 <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
                   {(previewImage || profileData.profilePicture) ? (
-                    <img 
-                      src={previewImage || profileData.profilePicture} 
-                      alt="Profile" 
+                    <img
+                      src={previewImage || profileData.profilePicture}
+                      alt="Profile"
                       className="w-full h-full rounded-full object-cover"
                     />
                   ) : (
