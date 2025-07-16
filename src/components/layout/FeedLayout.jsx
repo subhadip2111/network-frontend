@@ -10,6 +10,7 @@ import PostsRoute from "../pages/post/PostsRoute";
 import CreatePost from "../pages/post/CreatePost";
 import MyCommunities from "../communities/MyCommunities";
 import Profile from "../pages/profile/Profile";
+import CreatePostForm from "../posts/CreatePostForm";
 
 const NetworkApp = () => {
   const [posts, setPosts] = useState(dummyPosts);
@@ -121,7 +122,7 @@ const NetworkApp = () => {
             />
             <Route 
               path="/post" 
-              element={<CreatePost onCreatePost={handleCreatePost} />} 
+              element={<CreatePostForm  />} 
             />
             <Route 
               path="/my-communities" 

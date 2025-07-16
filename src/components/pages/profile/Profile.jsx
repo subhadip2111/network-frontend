@@ -146,7 +146,6 @@ const handleSave = async () => {
     }
   });
 
-  // If previewImage was set from image upload, make sure it's included
   if (previewImage && previewImage !== profileData.profilePicture) {
     updatedPayload.profilePicture = previewImage;
   }
