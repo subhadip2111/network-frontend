@@ -1,237 +1,3 @@
-// import { useState } from 'react';
-// import { Upload, X, ImageIcon, Link } from 'lucide-react';
-// import axios from 'axios';
-// import { useSelector } from 'react-redux';
-// import { useNavigate } from 'react-router-dom';
-// import toast from 'react-hot-toast';
-
-// const CreatePostForm = () => {
-//   const authUser=useSelector((state)=>state.auth.user);
-//   const accessToken=useSelector((state)=>state.auth.accessToken)
-//      const navigate=   useNavigate()
-
-//   const [formData, setFormData] = useState({
-//     type: 'idea',
-//     title: '',
-//     content: '',
-//     tags: '',
-//     // seeking: '',
-//     imageUrls: [],
-//   });
-//   const [isUploading, setIsUploading] = useState(false);
-
-//   const handleSubmit = async  (e) => {
-//     e.preventDefault();
-//     const post = {
-//       ...formData,
-//       tags: formData.tags.split(',').map(tag => tag.trim()).filter(Boolean),
-//     };
-//     console.log('Submitting post:', post);
-//     try {
-//       const createPost=await axios.post(`${import.meta.env.VITE_BACKEND_BASE_URL}/post/create`,formData,
-//         {
-//         headers: {
-//           Authorization: `Bearer ${accessToken}`,
-//           'x-api-key': import.meta.env.VITE_SWAGGER_API_KEY,
-//           'Content-Type': 'application/json',
-//         },
-//       }
-//       )
-//       console.log(createPost.data)
-
-
-//         toast.success('✅ Thanks for sharing your thoughts! Once verified, your post will be published on Network.', {
-//     duration: 8000,
-//     style: {
-//       borderRadius: '10px',
-//       background: '#333',
-//       color: '#fff',
-//     },
-//   });
-
-//   setFormData({
-//     type: 'idea',
-//     title: '',
-//     content: '',
-//     tags: '',
-//     seeking: '',
-//     imageUrls: []
-//   });
-// navigate('/home')
-//     } catch (error) {
-//       console.log(error)
-//     }
-//     // Submit the post to your API here
-//   };
-
-//   const handleImageUpload = async (event) => {
-//     const files = [...event.target.files];
-//     if (files.length === 0) return;
-
-//     setIsUploading(true);
-//     const uploadedUrls = [];
-
-//     for (let file of files) {
-//       const imageData = new FormData();
-//       imageData.append('file', file);
-
-//       try {
-//         const response = await axios.post(`${import.meta.env.VITE_BACKEND_BASE_URL}/user/image/upload`, imageData, {
-//           headers: {
-//             'x-api-key': import.meta.env.VITE_SWAGGER_API_KEY,
-//             'Content-Type': 'multipart/form-data',
-//           },
-//         });
-
-//         const imageUrl = response?.data?.url;
-//         if (imageUrl) uploadedUrls.push(imageUrl);
-//       } catch (error) {
-//         console.error('Image upload failed:', error);
-//       }
-//     }
-
-//     setFormData(prev => ({
-//       ...prev,
-//       imageUrls: [...prev.imageUrls, ...uploadedUrls],
-//     }));
-//     setIsUploading(false);
-//   };
-
-//   const removeImage = (urlToRemove) => {
-//     setFormData(prev => ({
-//       ...prev,
-//       imageUrls: prev.imageUrls.filter(url => url !== urlToRemove),
-//     }));
-//   };
-// console.log(formData)
-//   return (
-//     <div className="bg-white rounded-xl border border-gray-200 p-6 max-w-4xl mx-auto">
-//       <h2 className="text-2xl font-bold text-gray-900 mb-6">Create New Post</h2>
-
-//       <form onSubmit={handleSubmit} className="space-y-6">
-//         {/* Post Type */}
-//         <div>
-//           <label className="block text-sm font-medium text-gray-700 mb-2">Post Type</label>
-//           <select 
-//             value={formData.type}
-//             onChange={(e) => setFormData({ ...formData, type: e.target.value })}
-//             className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-//           >
-//             <option value="idea">💡 Idea</option>
-//             <option value="query">❓ Query</option>
-//             <option value="resources">📚 Resources</option>
-//             <option value="product_demo">🚀 Product Demo</option>
-//           </select>
-//         </div>
-
-//         {/* Title */}
-//         <div>
-//           <label className="block text-sm font-medium text-gray-700 mb-2">Title</label>
-//           <input
-//             type="text"
-//             value={formData.title}
-//             onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-//             className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-//             placeholder="Enter a compelling title..."
-//             required
-//           />
-//         </div>
-
-//         {/* Description */}
-//         <div>
-//           <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
-//           <textarea
-//             value={formData.content}
-//             onChange={(e) => setFormData({ ...formData, content: e.target.value })}
-//             rows={4}
-//             className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-//             placeholder="Describe your idea, problem, or project..."
-//             required
-//           />
-//         </div>
-
-//         {/* Image Upload */}
-//         <div>
-//           <label className="block text-sm font-medium text-gray-700 mb-2">Images</label>
-//           <div className="space-y-4">
-//             <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-indigo-400 transition-colors">
-//               <input
-//                 type="file"
-//                 multiple
-//                 accept="image/*"
-//                 onChange={handleImageUpload}
-//                 className="hidden"
-//                 id="image-upload"
-//               />
-//               <label htmlFor="image-upload" className="cursor-pointer">
-//                 <Upload className="mx-auto h-12 w-12 text-gray-400 mb-2" />
-//                 <p className="text-sm text-gray-600">Click to upload images or drag and drop</p>
-//                 <p className="text-xs text-gray-500 mt-1">PNG, JPG, GIF up to 10MB each</p>
-//               </label>
-//             </div>
-
-//             {formData.imageUrls.length > 0 && (
-//               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-//                 {formData.imageUrls.map((url, index) => (
-//                   <div key={index} className="relative group">
-//                     <img
-//                       src={url}
-//                       alt="Uploaded"
-//                       className="w-full h-24 object-cover rounded-lg border border-gray-200"
-//                     />
-//                     <button
-//                       type="button"
-//                       onClick={() => removeImage(url)}
-//                       className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
-//                     >
-//                       <X size={16} />
-//                     </button>
-//                     <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all rounded-lg flex items-center justify-center">
-//                       <ImageIcon className="text-white opacity-0 group-hover:opacity-100 transition-opacity" size={20} />
-//                     </div>
-//                   </div>
-//                 ))}
-//               </div>
-//             )}
-//           </div>
-//         </div>
-
-//         {/* Tags */}
-//         <div>
-//           <label className="block text-sm font-medium text-gray-700 mb-2">Tags</label>
-//           <input
-//             type="text"
-//             value={formData.tags}
-//             onChange={(e) => setFormData({ ...formData, tags: e.target.value })}
-//             className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-//             placeholder="Enter tags separated by commas (e.g., React, AI, Startup)"
-//           />
-//         </div>
-
-   
-
-//         {/* Submit Buttons */}
-//         <div className="flex space-x-4 pt-4">
-//           <button  
-//             type="submit"
-//             className="flex-1 bg-indigo-600 text-white py-2 px-4 rounded-lg hover:bg-indigo-700 transition-colors font-medium"
-//             disabled={isUploading}
-//           >
-//             {isUploading ? 'Uploading...' : 'Publish Post'}
-//           </button>
-//           <button
-//             type="button"
-//             className="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
-//           >
-//             Cancel
-//           </button>
-//         </div>
-//       </form>
-//     </div>
-//   );
-// };
-
-// export default CreatePostForm;
 
 
 import { useState } from 'react';
@@ -252,7 +18,7 @@ const CreatePostForm = () => {
       label: '💡 Idea',
       icon: Lightbulb,
       description: 'Share your innovative ideas and concepts',
-      fields: ['title', 'content', 'tags', 'seeking', 'imageUrls'],
+      fields: ['title', 'content', 'tags', 'seeking', 'imageUrls','techStack'],
       placeholders: {
         title: 'What\'s your big idea?',
         content: 'Describe your idea in detail...',
@@ -300,24 +66,21 @@ const CreatePostForm = () => {
     imageUrls: [],
     seeking: '', 
     urgency: 'medium', 
-    resourceUrls: [], // for resources
-    resourceType: 'article', // for resources
-    demoUrl: '', // for product demos
-    techStack: '', // for product demos
+    resourceUrls: [],
+    resourceType: 'article',
+    demoUrl: '', 
+    techStack: '', 
   });
 
   const [isUploading, setIsUploading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    // Filter form data based on current post type
     const currentConfig = postTypeConfig[formData.type];
     const filteredData = {
       type: formData.type,
     };
 
-    // Only include fields that are relevant to the current post type
     currentConfig.fields.forEach(field => {
       if (field === 'tags') {
         filteredData[field] = formData.tags.split(',').map(tag => tag.trim()).filter(Boolean);
@@ -345,7 +108,7 @@ const CreatePostForm = () => {
 
    ;
 setTimeout(()=>{
-     toast.success('✅ Thanks for sharing your thoughts! Once verified, your post will be published on Network.', {
+     toast.success('Thanks for sharing your thoughts! Once verified, your post will be published on Network.', {
         duration: 8000,
         style: {
           borderRadius: '10px',
@@ -354,7 +117,6 @@ setTimeout(()=>{
         },
       })
 },1000)
-      // Reset form
       setFormData({
         type: 'idea',
         title: '',
@@ -456,7 +218,6 @@ setTimeout(()=>{
 
   const currentConfig = postTypeConfig[formData.type];
   const shouldShowField = (fieldName) => currentConfig.fields.includes(fieldName);
-
   console.log(formData);
 
   return (

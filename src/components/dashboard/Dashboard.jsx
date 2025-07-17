@@ -1,22 +1,44 @@
 import { TrendingUp } from "lucide-react";
 import PostCard from "../posts/PostCard";
+import { useSelector } from "react-redux";
+import { useEffect } from "react";
+import axios from "axios";
 
-const Dashboard = ({ user, posts, onLike, onComment, onJoin }) => {
+const Dashboard = ({ posts, onLike, onComment, onJoin }) => {
 
+const user=useSelector((state)=>state.auth.user)
+const accessToken=useSelector((state)=>state.auth.accessToken)
+const fetchUserFeds=async()=>{
+  const result=await axios.get(`${import.meta.env.VITE_BACKEND_BASE_URL}/post/feeds`,
+    {
+      headers:{
+           Authorization: `Bearer ${accessToken}`,
+            'x-api-key': import.meta.env.VITE_SWAGGER_API_KEY,
+            'Content-Type': 'application/json',
+      }
+    }
+)
 
+    console.log(result.data)
 
+}
 
+useEffect(()=>{
+  fetchUserFeds()
+console.log('api call')
+},[])
+console.log('wrwe',user)
   const stats = [
     { label: 'Active Projects', value: '12', change: '+2 this week', color: 'text-green-600' },
     { label: 'Collaborations', value: '8', change: '+1 this month', color: 'text-blue-600' },
-    { label: 'Communities', value: user.communities, change: 'All time', color: 'text-indigo-600' },
+    // { label: 'Communities', value: user.communities, change: 'All time', color: 'text-indigo-600' },
     { label: 'Network Score', value: '94', change: '+5 points', color: 'text-purple-600' }
   ];
 
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Welcome back, {user.name.split(' ')[0]}!</h1>
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">Welcome back, {user.fullName}!</h1>
         <p className="text-gray-600">Here's what's happening in your network today.</p>
       </div>
 
