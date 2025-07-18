@@ -69,7 +69,6 @@ const VerifyOtp = () => {
           },
         }
       );
-console.log('OTP verification response:', response.data);
       dispatch(setVerifyUserInfo(response.data));
       dispatch(addDetails(response.data))
       dispatch(addTokens({
@@ -138,7 +137,6 @@ console.log('OTP verification response:', response.data);
     }
   };
 const userDetails = useSelector((state) => state.auth.user);
-  console.log('User details in VerifyOtp:', userDetails);
   return (
     <div className="w-full min-h-screen flex items-center justify-center bg-gray-950 text-white px-4">
       <form

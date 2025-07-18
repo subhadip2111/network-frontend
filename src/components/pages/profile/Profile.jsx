@@ -11,24 +11,7 @@ const Profile = () => {
   const dispatch = useDispatch();
   const currentUser = useSelector((state) => state.auth.user);
   const accessToken = useSelector((state) => state.auth.accessToken)
-  // Dummy user data - replace with actual Redux state later
-  // const dummyUserData = {
-  //   id: 'user-123',
-  //   email: 'john.doe@example.com',
-  //   age: 28,
-  //   referalPoint: 150,
-  //   password: 'password123',
-  //   fullName: 'John Doe',
-  //   profilePicture: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face',
-  //   role: 'DEVELOPER',
-  //   skills: ['JavaScript', 'React', 'Node.js', 'Python', 'Docker'],
-  //   bio: 'Passionate full-stack developer with 5+ years of experience building scalable web applications. I love working with modern technologies and solving complex problems.',
-  //   githubProfile: 'https://github.com/johndoe',
-  //   createdAt: '2023-01-15T10:30:00Z'
-  // };
-
   const [profileData, setProfileData] = useState(null);
-
   const [isEditing, setIsEditing] = useState(false);
   const [editData, setEditData] = useState(profileData);
   const [newSkill, setNewSkill] = useState('');
@@ -37,7 +20,6 @@ const Profile = () => {
   const [uploadingImage, setUploadingImage] = useState(false);
   const fileInputRef = useRef(null);
 
-  // Simulate API call with timeout
   const simulateApiCall = (data, delay = 1000) => {
     return new Promise((resolve) => {
       setTimeout(() => {
@@ -58,7 +40,6 @@ const Profile = () => {
         }
       )
       const userData = response.data.data;
-      console.log(`updated response`, userData)
       dispatch(updateUser({ data: userData }))
       setProfileData(userData);
       setEditData(userData);
@@ -89,7 +70,6 @@ const Profile = () => {
     setUploadingImage(true);
 
     try {
-      console.log('Uploading image:', selectedFile.name);
 
       const previewUrl = await axios.post(`${import.meta.env.VITE_BACKEND_BASE_URL}/user/image/upload`,
         formData,
@@ -107,7 +87,6 @@ const Profile = () => {
         profilePicture: previewUrl.data.url,
       }));
 
-      console.log('Image uploaded successfully');
     } catch (error) {
       console.error('Image upload failed:', error);
     } finally {
@@ -159,7 +138,6 @@ const handleSave = async () => {
   }
 
   try {
-    console.log('Updating profile with:', updatedPayload);
 
     const response = await axios.patch(
       `${import.meta.env.VITE_BACKEND_BASE_URL}/user/${currentUser.id}`,

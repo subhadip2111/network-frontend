@@ -89,7 +89,6 @@ const CreatePostForm = () => {
       }
     });
 
-    console.log('Submitting post:', filteredData);
     
     try {
       const createPost = await axios.post(
@@ -104,7 +103,6 @@ const CreatePostForm = () => {
         }
       );
       
-      console.log(createPost.data);
 
    ;
 setTimeout(()=>{

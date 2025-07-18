@@ -12,7 +12,7 @@ import {
   REGISTER,
 } from 'redux-persist';
 import profileSlice from './features/auth/profileSlice'; 
-
+import postSlice from './features/auth/postSlice'
 const persistConfig = {
   key: 'root',
   storage,
@@ -21,7 +21,8 @@ const persistConfig = {
 
 const rootReducer = combineReducers({
   auth: authSlice,
-  profile: profileSlice 
+  profile: profileSlice ,
+  posts:postSlice
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
