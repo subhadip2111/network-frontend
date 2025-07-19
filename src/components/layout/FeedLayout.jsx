@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Routes, Route, useLocation } from "react-router-dom";
+import { Routes, Route, useLocation, Outlet } from "react-router-dom";
 import { dummyCommunities, dummyPosts, dummyUser } from "../../data/dummydata";
 import Header from "../common/Header";
 import Sidebar from "../common/SideBar";
@@ -82,7 +82,7 @@ const NetworkApp = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50  ">
       <Header
         user={dummyUser}
         onProfileClick={() => console.log('Profile clicked')}
@@ -93,7 +93,6 @@ const NetworkApp = () => {
         <Sidebar
           activeSection={getActiveSection()}
           onSectionChange={(section) => {
-            // This should now use navigation instead of state
             console.log('Section changed to:', section);
           }}
         />

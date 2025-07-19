@@ -3,23 +3,21 @@ import {
   ThumbsUp, Users
 } from "lucide-react";
 import { formatDistanceToNow } from 'date-fns';
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
-import { updatePostTostore } from "../../features/auth/postSlice";
+import { updateSinglePostInArray } from "../../features/auth/postSlice";
 
 const PostCard = ({ feed }) => {
   const dispatch = useDispatch();
   const currentUser = useSelector((state) => state.auth.user);
   const accessToken = useSelector((state) => state.auth.accessToken);
-  const updatedPost = useSelector((state) =>
-    state.posts.post?.id === feed.id ? state.posts.post : null
-  );
-
+  const updatedPost = useSelector((state) => {
+    const posts = state.posts.posts || [];
+    return posts.find(post => post.id === feed.id) || feed;
+  });
   const [isUpdating, setIsUpdating] = useState(false);
-
-  let displayedFeed = updatedPost || feed;
-// console.log('displayedFeed',displayedFeed)
+  const displayedFeed = updatedPost;
   const getTypeIcon = (type) => {
     switch (type) {
       case 'startup': return <Rocket className="w-5 h-5 text-orange-500" />;
@@ -28,7 +26,6 @@ const PostCard = ({ feed }) => {
       default: return <Lightbulb className="w-5 h-5 text-gray-500" />;
     }
   };
-
   const getTypeColor = (type) => {
     switch (type) {
       case 'startup': return 'bg-orange-100 text-orange-800';
@@ -60,17 +57,23 @@ const PostCard = ({ feed }) => {
         }
       );
 
-      const updatedPost = res.data.data;
-      dispatch(updatePostTostore(updatedPost)); // You may need to update this logic if getpost expects full data
+      const updatedPostData = res.data.data;
+      // Update the specific post in the posts array instead of separate post state
+      dispatch(updateSinglePostInArray({
+        postId: feed.id,
+        updatedPost: updatedPostData
+      }));
+      
     } catch (error) {
       console.error("Interaction failed:", error);
+      // Optionally add user-friendly error handling here
     } finally {
       setIsUpdating(false);
     }
   };
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200 p-6 hover:shadow-lg transition-shadow">
+    <div className="bg-white rounded-xl border border-gray-200 p-6 hover:shadow-lg transition-shadow  ">
       <div className="flex items-start justify-between mb-4">
         <div className="flex items-center space-x-3">
           <img
@@ -136,28 +139,34 @@ const PostCard = ({ feed }) => {
           <button
             disabled={isUpdating}
             onClick={() => handleInteraction('like')}
-            className="flex items-center space-x-2 text-gray-500 hover:text-red-500 transition-colors disabled:opacity-50"
+            className={`flex items-center space-x-2 transition-colors disabled:opacity-50 ${
+              isUpdating ? 'text-gray-400' : 'text-gray-500 hover:text-red-500'
+            }`}
           >
-            <ThumbsUp className="w-5 h-5" />
+            <ThumbsUp className={`w-5 h-5 ${isUpdating ? 'animate-pulse' : ''}`} />
             <span className="text-sm">{displayedFeed.likeCount || 0}</span>
           </button>
 
           <button
             disabled={isUpdating}
             onClick={() => handleInteraction('celebrate')}
-            className="flex items-center space-x-2 text-gray-500 hover:text-pink-500 transition-colors disabled:opacity-50"
+            className={`flex items-center space-x-2 transition-colors disabled:opacity-50 ${
+              isUpdating ? 'text-gray-400' : 'text-gray-500 hover:text-pink-500'
+            }`}
           >
-            <PartyPopper className="w-5 h-5" />
-            <span className="text-sm">{displayedFeed.celebrate || 0}</span>
+            <PartyPopper className={`w-5 h-5 ${isUpdating ? 'animate-pulse' : ''}`} />
+            <span className="text-sm">{displayedFeed.celebrateCount || 0}</span>
           </button>
 
           <button
             disabled={isUpdating}
-            onClick={() => handleInteraction('colabrate')}
-            className="flex items-center space-x-2 text-gray-500 hover:text-blue-500 transition-colors disabled:opacity-50"
+            onClick={() => handleInteraction('colaborate')}
+            className={`flex items-center space-x-2 transition-colors disabled:opacity-50 ${
+              isUpdating ? 'text-gray-400' : 'text-gray-500 hover:text-blue-500'
+            }`}
           >
-            <Handshake className="w-5 h-5" />
-            <span className="text-sm">{displayedFeed.collaborations || 0}</span>
+            <Handshake className={`w-5 h-5 ${isUpdating ? 'animate-pulse' : ''}`} />
+            <span className="text-sm">{displayedFeed.collaboratorCount || 0}</span>
           </button>
 
           <button className="flex items-center space-x-2 text-gray-500">
@@ -165,12 +174,14 @@ const PostCard = ({ feed }) => {
           </button>
         </div>
 
-        <button
+        {
+          displayedFeed.type=='idea'?<button
           className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors font-medium flex items-center space-x-2"
         >
           <span>Join Collaboration</span>
           <ArrowRight className="w-4 h-4" />
-        </button>
+        </button>:null
+        }
       </div>
     </div>
   );

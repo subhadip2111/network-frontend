@@ -1,7 +1,22 @@
-import React from "react"
+import React, { useState } from "react"
+import { useSelector } from "react-redux";
 import { Link } from "react-router-dom"
 
 export default function LandingPage() {
+const accessToken = useSelector((state) => state.auth.accessToken);
+  let persistedToken = null;
+  try {
+    const persistedState = localStorage.getItem('persist:root');
+    if (persistedState) {
+      const parsedState = JSON.parse(persistedState);
+      const authState = JSON.parse(parsedState.auth);
+      persistedToken = authState?.accessToken;
+    }
+  } catch (err) {
+    console.error("Failed to parse persisted auth token", err);
+  }
+
+  const isLoggedIn = accessToken || persistedToken;
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 text-white overflow-hidden relative">
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -24,45 +39,24 @@ export default function LandingPage() {
               <Link to="/">Network</Link>
             </div>
 
-            {/* <div className="hidden md:block">
-              <div className="ml-10 flex items-baseline space-x-8">
-                <Link
-                  to="/explore"
-                  className="text-gray-300 hover:text-white px-3 py-2 text-sm font-medium transition-all duration-300 transform hover:scale-105 hover:drop-shadow-lg relative group"
-                >
-                  Explore
-                  <span className="absolute inset-x-0 -bottom-1 h-0.5 bg-indigo-400 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></span>
-                </Link>
-                <Link
-                  to="/top-ideas"
-                  className="text-gray-300 hover:text-white px-3 py-2 text-sm font-medium transition-all duration-300 transform hover:scale-105 hover:drop-shadow-lg relative group"
-                >
-                  Top Ideas
-                  <span className="absolute inset-x-0 -bottom-1 h-0.5 bg-indigo-400 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></span>
-                </Link>
-                <Link
-                  to="/login"
-                  className="text-gray-300 hover:text-white px-3 py-2 text-sm font-medium transition-all duration-300 transform hover:scale-105 hover:drop-shadow-lg relative group"
-                >
-                  Join Community
-                  <span className="absolute inset-x-0 -bottom-1 h-0.5 bg-indigo-400 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></span>
-                </Link>
-              </div>
-            </div> */}
+        
 
             <div className="flex items-center space-x-4">
-              <Link
+
+              {
+                isLoggedIn?  <Link
+                to="/home"
+                className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white px-4 py-2 text-sm font-medium rounded-md transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-indigo-500/25 hover:shadow-2xl"
+              >
+                Get Started
+              </Link> :<Link
                 to="/login"
                 className="text-gray-300 hover:text-white px-3 py-2 text-sm font-medium transition-all duration-300 transform hover:scale-105"
               >
                 Login
               </Link>
-              <Link
-                to="/get-started"
-                className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white px-4 py-2 text-sm font-medium rounded-md transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-indigo-500/25 hover:shadow-2xl"
-              >
-                Get Started
-              </Link>
+              }
+             
             </div>
           </div>
         </div>
@@ -122,7 +116,7 @@ export default function LandingPage() {
             <div className="relative inline-block">
               <div className="absolute inset-0 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-lg blur-lg opacity-75 animate-pulse"></div>
               <Link
-                to="/login"
+                to="/home"
                 className="relative inline-block bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-600 hover:from-indigo-500 hover:via-purple-500 hover:to-indigo-500 text-white px-8 py-4 text-lg font-semibold transition-all duration-300 transform hover:scale-110 hover:-translate-y-1 shadow-2xl hover:shadow-indigo-500/50 border border-indigo-500/50 backdrop-blur-sm animate-gradient-x rounded-md"
               >
                 Join the Movement

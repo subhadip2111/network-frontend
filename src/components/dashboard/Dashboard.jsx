@@ -126,7 +126,7 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 overflow-y-scroll">
       <div>
         <h1 className="text-3xl font-bold text-gray-900 mb-2">
           Welcome back, {user?.fullName}!
@@ -151,7 +151,7 @@ const Dashboard = () => {
       </div>
 
       <div>
-        <div className="space-y-6">
+        <div className="space-y-6  ">
           {feeds.length > 0 ? (
             feeds.map((feed) => (
               <PostCard

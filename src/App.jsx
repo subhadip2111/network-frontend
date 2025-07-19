@@ -17,13 +17,12 @@ import ProtectedRoute from './components/common/ProtectedRoute';
 function App() {
   return (
     <Routes>
-      {/* Public Routes */}
-      <Route path="/" element={<LandingPage />} />
+      <Route path="/" element={
+        <LandingPage />
+      } />
       <Route path="/login" element={<Login />} />
       <Route path="/verify-otp" element={<VerifyOtp />} />
       <Route path="/explore" element={<ExplorePage />} />
-
-      {/* Protected Routes */}
       <Route
         path="/home/*"
         element={
@@ -56,8 +55,6 @@ function App() {
           </ProtectedRoute>
         }
       />
-
-      {/* Fallback */}
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );

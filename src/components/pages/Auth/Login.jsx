@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -11,7 +11,11 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const accessToken = useSelector((state) => state.auth.accessToken);
 
+  if (accessToken) {
+    return <Navigate to="/home" replace />;
+  }
   const backendUrl = import.meta.env.VITE_BACKEND_BASE_URL 
   const handleSubmit = async (e) => {
     e.preventDefault();
